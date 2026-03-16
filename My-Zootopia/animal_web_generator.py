@@ -1,24 +1,38 @@
 import json
 
 def load_data(file_path):
-    """Loads a JSON file"""
+
     with open(file_path, "r") as handle:
         return json.load(handle)
 
+def serialize_animal(animal_obj):
+    output = ''
+    output += '<li class="cards__item">\n'
+
+    if "name" in animal_obj:
+        output += f'<div class="card__title">{animal_obj["name"]}</div>\n'
+    if "characteristics" in animal_obj and "diet" in animal_obj["characteristics"]:
+        output += f'Diet: {animal_obj["characteristics"]["diet"]}<br/>\n'
+    if "locations" in animal_obj and animal_obj["locations"]:
+        output += f'Location: {animal_obj["locations"][0]}<br/>\n'
+    if "characteristics" in animal_obj and "type" in animal_obj["characteristics"]:
+        output += f'Type: {animal_obj["characteristics"]["type"]}<br/>\n'
+
+    output += '</li>\n'
+
+    return output
+
 animals_data = load_data("animals_data.json")
-
-output = ""
+output = ''
 for animal in animals_data:
-    output += '<li Class="cards_item">\n'
+    output += serialize_animal(animal)
 
-    if "name" in animal:
-        output += f"Name: {animal['name']}<br/>\n"
-    if "characteristics" in animal and "diet" in animal["characteristics"]:
-        output += f"Diet: {animal['characteristics']['diet']}<br/>\n"
-    if "locations" in animal and animal["locations"]:
-        output += f"Location: {animal['locations'][0]}<br/>\n"
-    if "characteristics" in animal and "type" in animal["characteristics"]:
-        output += f"Type: {animal['characteristics']['type']}<br/>\n"
+with open("animals_template.html", "r") as file:
+    template = file.read()
 
-    output += "</li>\n"
-    print()
+new_html = template.replace("__REPLACE_ANIMALS_INFO__", output)
+
+with open("animals.html", "w") as file:
+    file.write(new_html)
+
+print("zootopia animals.html successfully generated.")
